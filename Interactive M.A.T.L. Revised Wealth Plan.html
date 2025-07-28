@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive M.A.T.L. Revised Wealth Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A narrative, single-page application that guides the user from the revised plan's core principles (the 5-step cycle) to a deep dive into its key pillars (via an interactive tabbed interface). The experience culminates in a hands-on risk simulator that visually contrasts the original risky strategy with the revised, safer one, reinforcing the report's key message through interaction. This structure was chosen to make a dense, text-heavy report digestible and engaging. -->
+    <!-- Visualization & Content Choices: Report Info: 5-Step Cycle -> Goal: Organize -> Viz: HTML/CSS diagram -> Interaction: Click-to-reveal rationale. Report Info: 6 Key Pillars -> Goal: Organize/Inform -> Viz: Tabbed interface -> Interaction: Click to switch content. Report Info: Core Risk/Reward Logic -> Goal: Compare/Relationships -> Viz: Dynamic Bar Chart (Chart.js/Canvas) -> Interaction: Sliders for BTC performance and APR dynamically update the chart, comparing the original vs. revised plan outcomes. CONFIRMATION: NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFCFB; /* Warm Off-White */
+            color: #3A3A3A; /* Dark Gray */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .nav-link.active {
+            color: #4A90E2; /* Muted Blue */
+            border-bottom-color: #4A90E2;
+        }
+        .tab-button.active {
+            background-color: #4A90E2;
+            color: white;
+        }
+        .rationale {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">M.A.T.L. Revised Plan</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#cycle" class="nav-link text-gray-600 border-b-2 border-transparent hover:text-blue-500 transition-colors">The Cycle</a>
+                <a href="#pillars" class="nav-link text-gray-600 border-b-2 border-transparent hover:text-blue-500 transition-colors">Key Pillars</a>
+                <a href="#simulator" class="nav-link text-gray-600 border-b-2 border-transparent hover:text-blue-500 transition-colors">Risk Simulator</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6 md:p-8">
+
+        <section id="intro" class="text-center my-12 md:my-16">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">From "Glitch" to Strategy</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">This interactive guide transforms the original M.A.T.L. plan into a robust, safer, and more realistic framework for building wealth. Explore the principles of a prudent financial strategy designed for long-term success.</p>
+        </section>
+
+        <section id="cycle" class="mb-16 md:mb-24">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">The Prudent Wealth-Building Cycle</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-2">A disciplined, 5-step approach prioritizing financial security. Click each step to learn more.</p>
+            </div>
+            <div class="space-y-4">
+                <!-- Step 1 -->
+                <div class="bg-white rounded-lg shadow-md">
+                    <button class="w-full text-left p-6 flex justify-between items-center focus:outline-none cycle-step-toggle">
+                        <span class="text-xl font-bold text-blue-600">Step 1: Establish a Strong Financial Foundation</span>
+                        <span class="text-2xl text-blue-600 transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="rationale px-6 pb-6">
+                        <p class="text-gray-700 mb-4"><strong>Actions:</strong> Build a 3-6 month emergency fund, eliminate high-interest debt, and define clear financial goals.</p>
+                        <p class="text-gray-600"><strong>Rationale:</strong> This creates a crucial buffer against unforeseen life events and market downturns, preventing forced asset sales and ensuring debt obligations can be met without distress.</p>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="bg-white rounded-lg shadow-md">
+                    <button class="w-full text-left p-6 flex justify-between items-center focus:outline-none cycle-step-toggle">
+                        <span class="text-xl font-bold text-blue-600">Step 2: Acquire Investment Capital Prudently</span>
+                        <span class="text-2xl text-blue-600 transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="rationale px-6 pb-6">
+                        <p class="text-gray-700 mb-4"><strong>Actions:</strong> Prioritize consistent savings from income (DCA). If considering debt, it must be very low-interest and for non-speculative, income-generating purposes.</p>
+                        <p class="text-gray-600"><strong>Rationale:</strong> Sustainable capital accumulation reduces reliance on external, risky leverage and aligns investment with income stability.</p>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="bg-white rounded-lg shadow-md">
+                    <button class="w-full text-left p-6 flex justify-between items-center focus:outline-none cycle-step-toggle">
+                        <span class="text-xl font-bold text-blue-600">Step 3: Implement Diversified & Risk-Managed Investment</span>
+                        <span class="text-2xl text-blue-600 transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="rationale px-6 pb-6">
+                        <p class="text-gray-700 mb-4"><strong>Actions:</strong> Diversify across asset classes (stocks, ETFs, crypto). Use strict position sizing (1-2% in any single crypto asset). Utilize stop-loss and take-profit orders.</p>
+                        <p class="text-gray-600"><strong>Rationale:</strong> Diversification spreads risk, while automated orders protect capital and enforce discipline, preventing catastrophic losses from volatility.</p>
+                    </div>
+                </div>
+                <!-- Step 4 -->
+                <div class="bg-white rounded-lg shadow-md">
+                    <button class="w-full text-left p-6 flex justify-between items-center focus:outline-none cycle-step-toggle">
+                        <span class="text-xl font-bold text-blue-600">Step 4: Long-Term Holding with Active Monitoring</span>
+                        <span class="text-2xl text-blue-600 transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="rationale px-6 pb-6">
+                        <p class="text-gray-700 mb-4"><strong>Actions:</strong> Hold with a long-term view, but actively monitor markets and your financial status. Continuously educate yourself and rebalance your portfolio periodically.</p>
+                        <p class="text-gray-600"><strong>Rationale:</strong> Long-term holding can capture growth, but active monitoring ensures adaptability. Continuous learning empowers informed decisions.</p>
+                    </div>
+                </div>
+                <!-- Step 5 -->
+                <div class="bg-white rounded-lg shadow-md">
+                    <button class="w-full text-left p-6 flex justify-between items-center focus:outline-none cycle-step-toggle">
+                        <span class="text-xl font-bold text-blue-600">Step 5: Strategic Profit Realization & Reinvestment</span>
+                        <span class="text-2xl text-blue-600 transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="rationale px-6 pb-6">
+                        <p class="text-gray-700 mb-4"><strong>Actions:</strong> Take profits strategically, considering tax implications. Maintain meticulous records. Reinvest profits prudently or use them to strengthen your financial foundation.</p>
+                        <p class="text-gray-600"><strong>Rationale:</strong> This ensures that gains are maximized post-tax and contribute to sustainable wealth growth, rather than being eroded by unforeseen costs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pillars" class="mb-16 md:mb-24">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-gray-800">The Six Pillars of a Safer Strategy</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-2">Explore the core principles that underpin the revised M.A.T.L. plan.</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-200" id="tab-buttons">
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300 active" data-tab="risk">Risk Management</button>
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300" data-tab="debt">Prudent Debt</button>
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300" data-tab="fund">Emergency Fund</button>
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300" data-tab="tax">UK Tax</button>
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300" data-tab="expectations">Expectations</button>
+                    <button class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg transition-colors duration-300" data-tab="advice">Professional Advice</button>
+                </div>
+                <div id="tab-content">
+                    <div id="risk" class="tab-pane active">
+                        <h4 class="text-2xl font-bold mb-4">Robust Risk Management</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>Diversification:</strong> Spread investments across various asset classes (stocks, ETFs, real estate) and limit crypto to a small, defined allocation of your portfolio.</li>
+                            <li><strong>Position Sizing:</strong> Never risk more than 1-2% of your total investment capital on a single volatile asset or trade.</li>
+                            <li><strong>Automated Orders:</strong> Use stop-loss orders to cap potential losses and take-profit orders to secure gains automatically, removing emotion from decisions.</li>
+                            <li><strong>Dollar-Cost Averaging (DCA):</strong> Invest a fixed amount regularly to average out your purchase price and reduce the impact of volatility.</li>
+                        </ul>
+                    </div>
+                    <div id="debt" class="tab-pane hidden">
+                        <h4 class="text-2xl font-bold mb-4">Prudent Debt Application</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>No Debt for Speculation:</strong> Primarily use debt for income-generating assets (like a business) or essential needs, not for speculating on volatile assets.</li>
+                            <li><strong>Understand LTV:</strong> If using crypto-backed loans, maintain very low Loan-to-Value ratios to avoid liquidation during market dips.</li>
+                            <li><strong>Avoid Over-Leveraging:</strong> High leverage (more than 1-3x) is a recipe for disaster in volatile markets.</li>
+                            <li><strong>Clear Repayment Plan:</strong> Ensure you can comfortably make loan repayments from your regular income, even if the investment fails.</li>
+                        </ul>
+                    </div>
+                    <div id="fund" class="tab-pane hidden">
+                        <h4 class="text-2xl font-bold mb-4">Financial Prudence & Emergency Fund</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>Substantial Emergency Fund:</strong> Maintain 3-6 months of living expenses in a liquid, stable, and easily accessible account (e.g., high-yield savings).</li>
+                            <li><strong>Separate Funds:</strong> Your emergency fund must be entirely separate from your investment capital and must not be invested in volatile assets.</li>
+                        </ul>
+                    </div>
+                    <div id="tax" class="tab-pane hidden">
+                        <h4 class="text-2xl font-bold mb-4">Navigating UK Tax Obligations</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>Meticulous Record Keeping:</strong> Keep detailed records of every transaction (buys, sells, swaps) for accurate Capital Gains Tax (CGT) calculations.</li>
+                            <li><strong>Utilize Allowances:</strong> Be aware of and use the annual CGT allowance (£3,000 for 2024/2025) and the £1,000 trading allowance.</li>
+                            <li><strong>Strategic Timing:</strong> Consider the timing of asset sales to optimize tax liabilities.</li>
+                            <li><strong>Professional Advice/Software:</strong> Use specialized crypto tax software or consult a qualified tax professional to ensure compliance.</li>
+                        </ul>
+                    </div>
+                    <div id="expectations" class="tab-pane hidden">
+                        <h4 class="text-2xl font-bold mb-4">Cultivating Realistic Expectations</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>Acknowledge Inherent Risk:</strong> Understand that cryptocurrencies are high-risk investments with the potential for total capital loss.</li>
+                            <li><strong>Avoid "Glitches":</strong> Be highly skeptical of any promises of "infinite money" or guaranteed high returns. If it sounds too good to be true, it is.</li>
+                            <li><strong>Focus on Education:</strong> Continuously learn about market fundamentals, economic indicators, and the specific assets you invest in.</li>
+                            <li><strong>Due Diligence:</strong> Thoroughly research every investment yourself. Do not rely solely on simplified guides or social media advice.</li>
+                        </ul>
+                    </div>
+                    <div id="advice" class="tab-pane hidden">
+                        <h4 class="text-2xl font-bold mb-4">The Role of Professional Financial Advice</h4>
+                        <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                            <li><strong>Specialized Expertise:</strong> Consult a qualified financial advisor who specializes in digital assets for tailored advice.</li>
+                            <li><strong>Objective Assessment:</strong> An advisor can offer an unbiased perspective, helping you avoid emotional decisions and ensuring your strategy is sound.</li>
+                            <li><strong>Regulatory Compliance:</strong> They can guide you through the complex and evolving regulatory landscape, ensuring you remain compliant with all laws.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulator" class="mb-16 md:mb-24 bg-white p-6 md:p-8 rounded-2xl shadow-xl">
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-bold text-gray-800">Interactive Risk Simulator</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-2">See the difference risk management makes. Compare the original "glitch" with the revised plan under different market conditions.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="lg:col-span-1 space-y-6">
+                    <div>
+                        <label for="simBtcPerformance" class="font-semibold text-gray-700">Bitcoin Performance</label>
+                        <input type="range" id="simBtcPerformance" min="-50" max="100" value="20" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="text-center text-lg font-bold text-blue-600 mt-2"><span id="simBtcPerformanceValue">20</span>%</div>
+                    </div>
+                    <div>
+                        <label for="simLoanApr" class="font-semibold text-gray-700">Loan Interest Rate (APR)</label>
+                        <input type="range" id="simLoanApr" min="3" max="20" value="7" step="0.1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="text-center text-lg font-bold text-blue-600 mt-2"><span id="simLoanAprValue">7.0</span>%</div>
+                    </div>
+                    <p class="text-sm text-gray-500 text-center">This simulator assumes a £10,000 portfolio with a £1,000 loan. The "Revised Plan" caps BTC loss at 15% and diversifies the other 90% of the portfolio in a stable asset with 4% growth.</p>
+                </div>
+                <div class="lg:col-span-2">
+                    <div class="chart-container"><canvas id="simulatorChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+            <p class="text-gray-500 text-sm max-w-3xl mx-auto px-4">This revised plan is for informational and educational purposes only and does not constitute financial advice. Investing in cryptocurrencies carries a high degree of risk. Always conduct your own thorough due diligence and consult with a qualified financial professional.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Cycle Accordion Logic ---
+            const cycleToggles = document.querySelectorAll('.cycle-step-toggle');
+            cycleToggles.forEach(toggle => {
+                toggle.addEventListener('click', () => {
+                    const rationale = toggle.nextElementSibling;
+                    const icon = toggle.querySelector('span:last-child');
+                    
+                    if (rationale.style.maxHeight) {
+                        rationale.style.maxHeight = null;
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        rationale.style.maxHeight = rationale.scrollHeight + "px";
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            // --- Pillars Tab Logic ---
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const targetTab = button.getAttribute('data-tab');
+                    tabPanes.forEach(pane => {
+                        if (pane.id === targetTab) {
+                            pane.classList.remove('hidden');
+                            pane.classList.add('active');
+                        } else {
+                            pane.classList.add('hidden');
+                            pane.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // --- Risk Simulator Logic ---
+            const simBtcSlider = document.getElementById('simBtcPerformance');
+            const simAprSlider = document.getElementById('simLoanApr');
+            const simBtcValue = document.getElementById('simBtcPerformanceValue');
+            const simAprValue = document.getElementById('simLoanAprValue');
+            const simCanvas = document.getElementById('simulatorChart');
+
+            let simulatorChart;
+
+            const updateSimulator = () => {
+                const btcPerf = parseInt(simBtcSlider.value);
+                const loanApr = parseFloat(simAprSlider.value);
+
+                simBtcValue.textContent = btcPerf;
+                simAprValue.textContent = loanApr.toFixed(1);
+
+                // --- Calculations ---
+                const portfolioSize = 10000;
+                const loanAmount = 1000;
+                const totalCapital = portfolioSize + loanAmount;
+                const loanCost = loanAmount * (loanApr / 100);
+
+                // Original "Glitch" Plan Outcome
+                const originalPlanFinal = (totalCapital * (1 + btcPerf / 100)) - loanAmount - loanCost;
+                const originalPlanProfit = originalPlanFinal - portfolioSize;
+                
+                // Revised Plan Outcome
+                const revisedPortfolio = { btc: 0.10, stable: 0.90 };
+                const stopLoss = -15;
+                const stableGrowth = 4;
+
+                let btcOutcomePerf = btcPerf;
+                if (btcPerf < stopLoss) {
+                    btcOutcomePerf = stopLoss; // Loss is capped
+                }
+                
+                const btcPortionFinal = (totalCapital * revisedPortfolio.btc) * (1 + btcOutcomePerf / 100);
+                const stablePortionFinal = (totalCapital * revisedPortfolio.stable) * (1 + stableGrowth / 100);
+                const revisedPlanFinal = btcPortionFinal + stablePortionFinal - loanAmount - loanCost;
+                const revisedPlanProfit = revisedPlanFinal - portfolioSize;
+
+                // --- Chart Update ---
+                const data = {
+                    labels: ['Original "Glitch" Plan', 'Revised Prudent Plan'],
+                    datasets: [{
+                        label: 'Net Profit/Loss (£)',
+                        data: [originalPlanProfit, revisedPlanProfit],
+                        backgroundColor: [
+                            originalPlanProfit >= 0 ? 'rgba(239, 68, 68, 0.6)' : 'rgba(239, 68, 68, 1)',
+                            revisedPlanProfit >= 0 ? 'rgba(74, 144, 226, 0.6)' : 'rgba(74, 144, 226, 1)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(74, 144, 226, 1)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                };
+
+                if (simulatorChart) {
+                    simulatorChart.data = data;
+                    simulatorChart.update();
+                } else {
+                    simulatorChart = new Chart(simCanvas, {
+                        type: 'bar',
+                        data: data,
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Simulated Net Profit/Loss Comparison',
+                                    color: '#3A3A3A',
+                                    font: { size: 16 }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: { 
+                                        color: '#6B7280',
+                                        callback: function(value) {
+                                            return '£' + value.toLocaleString();
+                                        }
+                                    },
+                                    grid: { color: '#E5E7EB' }
+                                },
+                                x: { ticks: { color: '#6B7280' } }
+                            }
+                        }
+                    });
+                }
+            };
+
+            simBtcSlider.addEventListener('input', updateSimulator);
+            simAprSlider.addEventListener('input', updateSimulator);
+
+            // Initial call
+            updateSimulator();
+        });
+    </script>
+</body>
+</html>
